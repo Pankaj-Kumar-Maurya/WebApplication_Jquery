@@ -4,6 +4,26 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <script src="jquery.js"></script>
+
+    <script type="text/javascript">
+        function INSERT() {
+            $.ajax({
+                url: 'StudentForm.aspx/Save',
+                type: 'post',
+                contentType: 'application/json;charset=utf-8',
+                dataType: 'json',
+                data: "{A:'" + $("#txtname").val() + "',B:'" + $("#txtaddress").val() + "',C:'" + $("#txtage").val() +"'}",
+                success: function () {
+                    alert("Ok");
+                },
+                error: function () {
+                    alert("Not Ok");
+                }
+            });
+        }
+       
+    </script>
     <title></title>
 </head>
 <body>
@@ -25,9 +45,10 @@
                 </tr>
                  <tr>
                     <th></th>
-                    <td><input type="button" id="btnsave" value="Save" onclick="Save()"/></td>
+                    <%--<td><input type="button" id="btnsave" value="Save" onclick="INSERT()"/></td>--%>
                 </tr>
             </table>
+          
         </div>
     </form>
 </body>

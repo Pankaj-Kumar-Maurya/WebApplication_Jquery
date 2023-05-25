@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Data;
+using System.Web.Services;
 
 namespace WebApplication_Jquery
 {
@@ -16,8 +17,10 @@ namespace WebApplication_Jquery
         {
 
         }
-
-        public static void Insert(string A,string B,string C)
+        //WARNING : --> This Page is Replaced by WebService1.asmx.cs page.(BackEnd Code)
+        //        : --> And StudentForm.aspx is replaced by StudentFormHTML.(For FrontEnd UI)
+        [WebMethod]
+        public static void Save(string A,string B,int C)
         {
             con.Open();
             SqlCommand cmd = new SqlCommand("sp_StudentInsert", con);
