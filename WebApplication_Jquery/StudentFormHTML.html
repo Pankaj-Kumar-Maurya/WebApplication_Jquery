@@ -2,21 +2,164 @@
 <html>
 <head>
     <script src="jquery.js"></script>
-    <script type="text/javascript">
+    <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+
+    <script>
+        var Globel_Id = 0;
+        //this commented funtion(only show) and html table is created by ChatGpt and its work well
+        //$(document).ready(function () {
+        //    // AJAX request to retrieve data from the web service
+        //    $.ajax({
+        //        url: 'WebService1.asmx/Show',
+        //        method: 'POST',
+        //        contentType: 'application/json; charset=utf-8',
+        //        dataType: 'json',
+
+        //        success: function (data) {
+        //            // Parse the string data into JSON format
+        //            var jsonData = JSON.parse(data.d);
+
+        //            // Clear the existing table body
+        //            $('#tableBody').empty();
+
+        //            // Iterate over the data and create table rows
+        //            $.each(jsonData, function (_, item) {
+        //                var row = $('<tr>');
+        //                var column1 = $('<td>').text(item.id);
+        //                var column2 = $('<td>').text(item.name);
+        //                var column3 = $('<td>').text(item.address);
+        //                var column4 = $('<td>').text(item.age);
+        //                // Add more columns as needed
+
+        //                // Append the columns to the row
+        //                row.append(column1);
+        //                row.append(column2);
+        //                row.append(column3);
+        //                row.append(column4);
+        //                // Append the row to the table body
+        //                $('#tableBody').append(row);
+        //            });
+        //        },
+        //        error: function (xhr, status, error) {
+        //            console.log('Error: ' + error);
+        //        }
+        //    });
+        //});
+
+        $(document).ready(function(){
+            Show();
+           
+        });
+
         function INSERT() {
+            if ($("#btnsave").val() == "Save") {
+                $.ajax({
+                    url: 'WebService1.asmx/Save',
+                    type: 'post',
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+                    data: "{A:'" + $("#txtname").val() + "',B:'" + $("#txtaddress").val() + "',C:'" + $("#txtage").val() + "'}",
+                    success: function () {
+
+                        Show();
+                        Clear();
+                    },
+                    error: function () {
+                        alert("Data Not Inserted ");
+                    }
+                });
+
+            }
+            else {
+                $.ajax({
+                    url: 'WebService1.asmx/StudentUpdate',
+                    type: 'post',
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+                    data: "{D:'" + Globel_Id + "',A:'" + $("#txtname").val() + "',B:'" + $("#txtaddress").val() + "',C:'" + $("#txtage").val() + "'}",
+                    success: function () {
+
+                        Show();
+                        Clear();
+                    },
+                    error: function () {
+                        alert("Data Not Updated ");
+                    }
+                });
+            }
+           
+        }
+
+
+        function Show() {
             $.ajax({
-                url: 'WebService1.asmx/Save',
+                url: 'WebService1.asmx/ShowStudent',
                 type: 'post',
                 contentType: 'application/json;charset=utf-8',
                 dataType: 'json',
-                data: "{A:'" + $("#txtname").val() + "',B:'" + $("#txtaddress").val() + "',C:'" + $("#txtage").val() + "'}",
-                success: function () {
-                    alert("Ok");
+                data: "{}",
+                success: function (data) {
+                    data = JSON.parse(data.d);
+                    $("#tbl").find("tr:gt(0)").remove();
+                    for (var i = 0; i < data.length; i++) {
+                        $("#tbl").append('<tr><td>' + data[i].id + '</td>  <td>' + data[i].name + '</td>  <td>' + data[i].address + '</td>  <td>' + data[i].age + '</td>  <td><input type="button" id="btndelete" value="Delete" onclick="DELETE(' + data[i].id + ')" /></td>  <td><input type="button" id="btnedit" value="Edit" onclick="EDIT(' + data[i].id +')" /></td>  </tr>');
+                    }
                 },
                 error: function () {
-                    alert("Not Ok");
+                    alert("data not show");
                 }
             });
+        }
+
+        function DELETE(id) {
+            $.ajax({
+                url: 'WebService1.asmx/StudentDelete',
+                type: 'post',
+                contentType: 'application/json;charset=utf-8',
+                dataType: 'json',
+                data: "{A:'" +id + "'}",
+                success: function () {
+
+                    Show();
+                    alert("Delete Success");
+                    
+                },
+                error: function () {
+                    alert("Data Not deleted ");
+                }
+            });
+        }
+
+        function EDIT(id) {
+            $.ajax({
+                url: 'WebService1.asmx/EditStudent',
+                type: 'post',
+                contentType: 'application/json;charset=utf-8',
+                dataType: 'json',
+                data: "{D:'" + id + "'}",
+                success: function (data) {
+                    data = JSON.parse(data.d);
+                   // alert(data[0].name); //use for testing to confirm data is coming or not 
+                    $("#txtname").val(data[0].name);
+                    $("#txtaddress").val(data[0].address);
+                    $("#txtage").val(data[0].age);
+                    $("#btnsave").val("Update");
+                    Globel_Id = id;
+
+                    
+                },
+                error: function () {
+                    alert("Data Not edited ");
+                }
+            });
+        }
+
+        function Clear() {
+            $("#txtname").val('');
+            $("#txtaddress").val('');
+            $("#txtage").val('');
+            $("#btnsave").val("Save");
+            Globel_Id = 0;
         }
 
     </script>
@@ -43,5 +186,34 @@
             <td><input type="button" id="btnsave" value="Save" onclick="INSERT()" /></td>
         </tr>
     </table>
+
+    <table id="tbl" border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Age</th>
+        </tr>
+    </table>
+
+
+
+    <!--ChatGpt Table for Show-->
+    <!--<table border="1">
+        <thead>
+            <tr>
+                <th>Property Id</th>
+                <th>Property Name</th>
+                <th>Property Address</th>
+                <th>Property Age</th>-->
+    <!-- Add more headers as needed -->
+    <!--</tr>
+    </thead>
+    <tbody id="tableBody">-->
+    <!-- Table rows will be dynamically added here -->
+    <!--</tbody>
+    </table>-->
+
+
 </body>
 </html>

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Services;
 using System.Data.SqlClient;
 using System.Data;
+using Newtonsoft.Json;
 
 namespace WebApplication_Jquery
 {
@@ -28,6 +29,48 @@ namespace WebApplication_Jquery
             cmd.Parameters.AddWithValue("name", A);
             cmd.Parameters.AddWithValue("address", B);
             cmd.Parameters.AddWithValue("age", C);
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        [WebMethod]
+        public string ShowStudent()
+        {
+            string data = "";  
+            SqlCommand cmd = new SqlCommand("Select * from Student", con);
+            SqlDataAdapter da= new SqlDataAdapter(cmd);
+            DataTable dt=new DataTable();
+            da.Fill(dt);
+            data= JsonConvert.SerializeObject(dt);
+            return data;  
+        }
+
+        [WebMethod]
+        public void StudentDelete(int A)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("delete Student where id='"+A+"' ", con);
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        [WebMethod]
+        public string EditStudent(int D)
+        {
+            string data = "";
+            SqlCommand cmd = new SqlCommand("Select * from Student where id='"+D+"'", con);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            data = JsonConvert.SerializeObject(dt);
+            return data;
+        }
+
+        [WebMethod]
+        public void StudentUpdate(int D,string A,string B,int C)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("update Student set name='"+A+"',address='"+B+"',age='"+C+"' where id='"+D+"' ",con);
             cmd.ExecuteNonQuery();
             con.Close();
         }
