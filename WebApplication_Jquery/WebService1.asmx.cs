@@ -41,7 +41,8 @@ namespace WebApplication_Jquery
             SqlDataAdapter da= new SqlDataAdapter(cmd);
             DataTable dt=new DataTable();
             da.Fill(dt);
-            data= JsonConvert.SerializeObject(dt);
+            data= JsonConvert.SerializeObject(dt);/*dt is a object of datatable class that have the table records. 
+                                                   * This line comvert the dt object into json string and store it in a sting type variable data */
             return data;  
         }
 
@@ -50,7 +51,8 @@ namespace WebApplication_Jquery
         {
             con.Open();
             SqlCommand cmd = new SqlCommand("delete Student where id='"+A+"' ", con);
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();/*run the command on sqlserver, connected database.
+                                  The method does not return any result set but instead returns the number of rows affected by the SQL command execution.*/
             con.Close();
         }
 
